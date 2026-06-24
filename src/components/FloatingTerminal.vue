@@ -106,7 +106,7 @@
 
 <script setup>
     import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { constantsStore } from '@/store';
+    import { constantsStore, DEFAULT_RESUME_LINK } from '@/store';
     import { useContactPrefill } from '@/composables/useContactPrefill';
     import { useDraggablePanel } from '@/composables/useDraggablePanel';
     import { useMotion } from '@/composables/useMotion';
@@ -270,7 +270,7 @@
                 appendOutput(unknownSectionMessage(target));
             }
         } else if (command === 'open resume') {
-            const resumeLink = constantsStore.resumeLink || '/my-portfolio/resume.pdf';
+            const resumeLink = constantsStore.resumeLink || DEFAULT_RESUME_LINK;
             window.open(resumeLink, '_blank', 'noopener,noreferrer');
             appendOutput([`Opening ${resumeLink}`]);
         } else if (command === 'clear') {

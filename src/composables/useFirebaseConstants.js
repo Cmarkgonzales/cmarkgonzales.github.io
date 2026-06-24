@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
-import { constantsStore } from '@/store';
+import { constantsStore, DEFAULT_RESUME_LINK } from '@/store';
 
 const isLoading = ref(true);
 const error = ref(null);
@@ -20,7 +20,7 @@ const fetchConstants = async () => {
             constantsStore.homeSection = data.homeSection || {};
             constantsStore.socialLinks = data.socialLinks || [];
             constantsStore.aboutMe = data.aboutMe || {};
-            constantsStore.resumeLink = data.resumeLink || '/my-portfolio/resume.pdf';
+            constantsStore.resumeLink = data.resumeLink || DEFAULT_RESUME_LINK;
             constantsStore.experiences = data.experiences || [];
             constantsStore.projects = data.myProjects || [];
             constantsStore.mainSkills = data.mainSkills || [];

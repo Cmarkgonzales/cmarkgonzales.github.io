@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://cmarkgonzales.github.io/my-portfolio/",
+  "homepage": "https://cmarkgonzales.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "npm run sync:draco && vite build",
