@@ -18,7 +18,7 @@
                         </span>
                     </div>
                     <p class="text-gray-400 text-sm ml-3">
-                        Frontend | Backend | Full Stack Developer
+                        Full Stack Software Engineer
                     </p>
                 </div>
 

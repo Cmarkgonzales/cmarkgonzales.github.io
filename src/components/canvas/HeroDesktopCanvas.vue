@@ -13,7 +13,7 @@
         <img
             v-if="showPoster"
             :src="posterUrl"
-            alt="3D gaming desktop workstation illustration"
+            alt="3D desktop workstation with code on the monitor"
             class="hero-poster pointer-events-none absolute inset-0 z-[2] h-full w-full object-contain"
         />
         <div
@@ -22,7 +22,7 @@
             class="hero-canvas-viewport pointer-events-auto absolute inset-0 z-[3] touch-none"
             aria-hidden="true"
         />
-        <HeroTechFloatLabels class="z-[4]" />
+        <div class="hero-ground-shadow pointer-events-none absolute inset-x-[14%] bottom-[7%] z-[2] h-[14%]" aria-hidden="true" />
     </div>
 </template>
 
@@ -32,7 +32,6 @@
     import { useMotion } from '@/composables/useMotion';
     import CanvasLoader from '@/components/canvas/CanvasLoader.vue';
     import HeroCanvasSparkles from '@/components/canvas/HeroCanvasSparkles.vue';
-    import HeroTechFloatLabels from '@/components/canvas/HeroTechFloatLabels.vue';
 
     const POSTER_URL = `${import.meta.env.BASE_URL}assets/hero-desktop-poster.webp`;
 
@@ -48,6 +47,8 @@
     const shouldUsePoster = () => isReducedMotion.value;
 
     const activatePoster = () => {
+        sceneHandle?.dispose();
+        sceneHandle = null;
         showPoster.value = true;
         loading.value = false;
     };
@@ -142,6 +143,17 @@
         background: transparent !important;
     }
 
+    .hero-canvas-viewport,
+    .hero-poster {
+        transform: translateY(4%);
+    }
+
+    .hero-ground-shadow {
+        border-radius: 50%;
+        background: radial-gradient(ellipse at center, rgba(1, 8, 18, 0.82) 0%, rgba(1, 8, 18, 0.28) 46%, transparent 72%);
+        filter: blur(10px);
+    }
+
     .hero-poster {
         left: 0;
         top: 0;
@@ -149,6 +161,6 @@
         bottom: 0;
         max-width: 100%;
         max-height: 100%;
-        filter: drop-shadow(0 0 28px rgba(7, 178, 217, 0.18));
+        filter: drop-shadow(0 18px 18px rgba(1, 8, 18, 0.45)) drop-shadow(0 0 28px rgba(7, 178, 217, 0.16));
     }
 </style>

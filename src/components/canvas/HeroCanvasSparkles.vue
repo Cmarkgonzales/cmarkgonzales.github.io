@@ -10,7 +10,7 @@
     import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
     import { useMotion } from '@/composables/useMotion';
 
-    const SPARKLE_COUNT = 180;
+    const SPARKLE_COUNT = 64;
 
     const canvasRef = ref(null);
     let ctx = null;

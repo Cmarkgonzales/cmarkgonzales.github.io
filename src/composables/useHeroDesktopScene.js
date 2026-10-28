@@ -7,6 +7,7 @@ const IDLE_RESUME_MS = 1800;
 const IDLE_SWAY_AMPLITUDE = 0.28;
 const IDLE_SWAY_SPEED = 0.42;
 const RETURN_TO_FRONT_DURATION = 1.15;
+const MODEL_LOAD_TIMEOUT_MS = 45000;
 
 let CAMERA_VIEW_DIRECTION = null;
 const orbitSpherical = { radius: 0, phi: 0, theta: 0 };
@@ -85,7 +86,7 @@ function getBoxCorners(box, THREE) {
     ];
 }
 
-function cornersFitViewport(corners, camera, THREE, margin = 0.04) {
+function cornersFitViewport(corners, camera, THREE, margin = 0.015) {
     const projected = new THREE.Vector3();
 
     return corners.every((corner) => {
@@ -113,7 +114,7 @@ function fitDesktopInView(model, camera, controls, THREE, distanceMultiplier = 1
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
     const fitHeightDistance = sphere.radius / Math.sin(vFov / 2);
     const fitWidthDistance = sphere.radius / Math.sin(hFov / 2);
-    let distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.02 * distanceMultiplier;
+    let distance = Math.max(fitHeightDistance, fitWidthDistance) * 0.92 * distanceMultiplier;
 
     for (let attempt = 0; attempt < 12; attempt += 1) {
         camera.position.copy(center).add(CAMERA_VIEW_DIRECTION.clone().multiplyScalar(distance));
@@ -162,17 +163,13 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
         return { dispose: () => {}, render: () => {}, skipped: true };
     }
 
-    const DRACO_DECODER_PATH = `${import.meta.env.BASE_URL}assets/draco/gltf/`;
-
     const [
         THREE,
         { GLTFLoader },
-        { DRACOLoader },
         { OrbitControls },
     ] = await Promise.all([
         import('three'),
         import('three/addons/loaders/GLTFLoader.js'),
-        import('three/addons/loaders/DRACOLoader.js'),
         import('three/addons/controls/OrbitControls.js'),
     ]);
 
@@ -276,6 +273,18 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
     let isMobile = window.matchMedia(MOBILE_QUERY).matches;
     let animationId = null;
     let hasRendered = false;
+    let loadSettled = false;
+    let loadTimeoutId = null;
+
+    const settleLoad = (handler) => {
+        if (loadSettled) return;
+        loadSettled = true;
+        if (loadTimeoutId !== null) {
+            clearTimeout(loadTimeoutId);
+            loadTimeoutId = null;
+        }
+        handler();
+    };
 
     const applyIdleMotion = (elapsed) => {
         if (!desktopModel || !targetTransform || isUserInteracting || !entranceComplete || reducedMotion) {
@@ -376,43 +385,58 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
         }
     });
 
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
+    const loadingManager = new THREE.LoadingManager(
+        undefined,
+        (_url, itemsLoaded, itemsTotal) => {
+            if (itemsTotal > 0) {
+                onProgress?.((itemsLoaded / itemsTotal) * 100);
+            }
+        },
+        (url) => {
+            console.error('Hero desktop asset failed:', url);
+            settleLoad(() => onError?.(new Error(`Failed to load ${url}`)));
+        },
+    );
 
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
+    const loader = new GLTFLoader(loadingManager);
     loader.setResourcePath(MODEL_URL.slice(0, MODEL_URL.lastIndexOf('/') + 1));
+
+    loadTimeoutId = setTimeout(() => {
+        console.error('Hero desktop model timed out');
+        settleLoad(() => onError?.(new Error('Hero desktop model load timed out')));
+    }, MODEL_LOAD_TIMEOUT_MS);
 
     loader.load(
         MODEL_URL,
         (gltf) => {
-            desktopModel = gltf.scene;
-            prepareHeroDesktopModel(desktopModel);
-            targetTransform = applyDesktopTransform(desktopModel, isMobile, THREE);
-            scene.add(desktopModel);
+            try {
+                desktopModel = gltf.scene;
+                prepareHeroDesktopModel(desktopModel);
+                targetTransform = applyDesktopTransform(desktopModel, isMobile, THREE);
+                scene.add(desktopModel);
 
-            if (reducedMotion) {
-                cameraFit = fitDesktopInView(desktopModel, camera, controls, THREE);
-                captureFrontAzimuth();
-            } else {
-                desktopModel.scale.setScalar(targetTransform.scale * 0.84);
-                desktopModel.position.y = targetTransform.position.y + 0.28;
-                cameraFit = fitDesktopInView(desktopModel, camera, controls, THREE, 1.1);
-                entranceElapsed = 0;
-                entranceComplete = false;
-            }
+                if (reducedMotion) {
+                    cameraFit = fitDesktopInView(desktopModel, camera, controls, THREE);
+                    captureFrontAzimuth();
+                } else {
+                    desktopModel.scale.setScalar(targetTransform.scale * 0.84);
+                    desktopModel.position.y = targetTransform.position.y + 0.28;
+                    cameraFit = fitDesktopInView(desktopModel, camera, controls, THREE, 1.1);
+                    entranceElapsed = 0;
+                    entranceComplete = false;
+                }
 
-            onLoad?.();
-            render();
-        },
-        (xhr) => {
-            if (xhr.total) {
-                onProgress?.((xhr.loaded / xhr.total) * 100);
+                settleLoad(() => onLoad?.());
+                render();
+            } catch (error) {
+                console.error('Hero desktop model setup failed:', error);
+                settleLoad(() => onError?.(error));
             }
         },
+        undefined,
         (error) => {
             console.error('Hero desktop model failed:', error);
-            onError?.(error);
+            settleLoad(() => onError?.(error));
         },
     );
 
@@ -466,7 +490,10 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
         mediaQuery.removeEventListener('change', handleMobileChange);
         document.removeEventListener('visibilitychange', onVisibilityChange);
         resizeObserver.disconnect();
-        dracoLoader.dispose();
+        if (loadTimeoutId !== null) {
+            clearTimeout(loadTimeoutId);
+            loadTimeoutId = null;
+        }
         controls.dispose();
 
         if (desktopModel) {

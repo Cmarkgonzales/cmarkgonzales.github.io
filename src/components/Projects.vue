@@ -79,11 +79,13 @@
         </div>
         <div
             v-if="myProjects.length <= 1"
-            class="mt-16 mx-auto max-w-md text-center transition-opacity duration-700 animate-fade-in"
+            class="mt-16 mx-auto max-w-2xl text-center transition-opacity duration-700 animate-fade-in"
         >
-            <p class="text-text-muted italic flex items-center justify-center gap-2">
-                <font-awesome-icon class="text-ncs-blue" icon="fas fa-clock" />
-                More projects to come soon. Stay tuned!
+            <p class="flex items-start justify-center gap-3 leading-relaxed text-text-secondary sm:items-center">
+                <font-awesome-icon class="mt-1 shrink-0 text-sky-cyan sm:mt-0" icon="fas fa-server" aria-hidden="true" />
+                <span>
+                    Selected public work only. My production contributions also span B2B and workforce platforms, backend systems, CRM automation, and conversational AI.
+                </span>
             </p>
         </div>
 
