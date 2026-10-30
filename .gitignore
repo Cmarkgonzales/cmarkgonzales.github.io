@@ -40,7 +40,4 @@ public/assets/draco/
 **/draco_encoder.js
 **/draco_decoder.js
 
-# Generated hero fallback poster
-public/assets/hero-desktop-poster.webp
-
 AGENTS.md

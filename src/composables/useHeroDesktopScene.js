@@ -1,6 +1,7 @@
 import { useMotion } from '@/composables/useMotion';
 
 const MODEL_URL = `${import.meta.env.BASE_URL}assets/hero-desktop-pc/scene.gltf`;
+const DRACO_DECODER_PATH = `${import.meta.env.BASE_URL}assets/draco/gltf/`;
 const MOBILE_QUERY = '(max-width: 500px)';
 const ENTRANCE_DURATION = 1.35;
 const IDLE_RESUME_MS = 1800;
@@ -166,10 +167,12 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
     const [
         THREE,
         { GLTFLoader },
+        { DRACOLoader },
         { OrbitControls },
     ] = await Promise.all([
         import('three'),
         import('three/addons/loaders/GLTFLoader.js'),
+        import('three/addons/loaders/DRACOLoader.js'),
         import('three/addons/controls/OrbitControls.js'),
     ]);
 
@@ -178,7 +181,7 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
     const { onProgress, onLoad, onError } = callbacks;
     const { isReducedMotion } = useMotion();
     const reducedMotion = isReducedMotion.value;
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
 
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -190,7 +193,7 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
@@ -394,11 +397,14 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
         },
         (url) => {
             console.error('Hero desktop asset failed:', url);
-            settleLoad(() => onError?.(new Error(`Failed to load ${url}`)));
         },
     );
 
+    const dracoLoader = new DRACOLoader(loadingManager);
+    dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
+
     const loader = new GLTFLoader(loadingManager);
+    loader.setDRACOLoader(dracoLoader);
     loader.setResourcePath(MODEL_URL.slice(0, MODEL_URL.lastIndexOf('/') + 1));
 
     loadTimeoutId = setTimeout(() => {
@@ -462,8 +468,9 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
 
     const loop = () => {
         animationId = requestAnimationFrame(loop);
-        const delta = clock.getDelta();
-        const elapsed = clock.elapsedTime;
+        timer.update();
+        const delta = timer.getDelta();
+        const elapsed = timer.getElapsed();
 
         updateEntrance(delta);
         applyIdleSway(elapsed, delta);
@@ -495,6 +502,7 @@ export async function initHeroDesktopScene(containerEl, callbacks = {}) {
             loadTimeoutId = null;
         }
         controls.dispose();
+        dracoLoader.dispose();
 
         if (desktopModel) {
             scene.remove(desktopModel);

@@ -11,10 +11,11 @@
         </div>
         <CanvasLoader v-if="loading && !showPoster" :progress="progress" />
         <img
-            v-if="showPoster"
+            v-if="showPoster && !posterFailed"
             :src="posterUrl"
             alt="3D desktop workstation with code on the monitor"
             class="hero-poster pointer-events-none absolute inset-0 z-[2] h-full w-full object-contain"
+            @error="posterFailed = true"
         />
         <div
             v-show="!showPoster"
@@ -39,6 +40,7 @@
     const loading = ref(true);
     const progress = ref(0);
     const showPoster = ref(false);
+    const posterFailed = ref(false);
     const posterUrl = POSTER_URL;
     let sceneHandle = null;
 
