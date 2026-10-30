@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="text-center text-sm text-gray-300 space-y-1">
-                    <p>&copy; 2025 Christian Mark Gonzales. All rights reserved.</p>
+                    <p>&copy; {{ currentYear }} Christian Mark Gonzales. All rights reserved.</p>
                     <p class="text-xs text-gray-500">
                         Hero 3D desktop by
                         <a
@@ -50,6 +50,8 @@
 </template>
 
 <script setup>
+    const currentYear = new Date().getFullYear();
+
     const scrollToSection = (selector, hash) => {
         const section = document.querySelector(selector);
         if (section) {
