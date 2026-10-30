@@ -58,7 +58,7 @@
 
                     <button
                         type="button"
-                        class="floating-terminal-icon-btn focus-ring"
+                        class="floating-terminal-icon-btn focus-ring cursor-pointer"
                         aria-label="Close terminal"
                         @click.stop="closeTerminal"
                     >
@@ -564,7 +564,7 @@
     .floating-terminal-input {
         flex: 1;
         min-width: 0;
-        border: none;
+        border-radius: 4px;
         outline: none;
         background: transparent;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;

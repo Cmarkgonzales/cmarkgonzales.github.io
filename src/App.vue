@@ -11,9 +11,7 @@
             :active="burstActive"
             @complete="dismissBurst"
         />
-        <div v-if="isLoading" class="flex items-center justify-center h-screen bg-oxford-blue">
-            <LoadingScreen />
-        </div>
+        <LoadingScreen v-if="isLoading" />
 
         <template v-else>
             <NavBar />

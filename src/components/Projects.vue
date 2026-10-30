@@ -77,17 +77,15 @@
                 </div>
             </article>
         </div>
-        <div
-            v-if="myProjects.length <= 1"
-            class="mt-16 mx-auto max-w-2xl text-center transition-opacity duration-700 animate-fade-in"
-        >
-            <p class="flex items-start justify-center gap-3 leading-relaxed text-text-secondary sm:items-center">
-                <font-awesome-icon class="mt-1 shrink-0 text-sky-cyan sm:mt-0" icon="fas fa-server" aria-hidden="true" />
-                <span>
-                    Selected public work only. My production contributions also span B2B and workforce platforms, backend systems, CRM automation, and conversational AI.
-                </span>
-            </p>
-        </div>
+        <p class="mx-auto mt-16 max-w-2xl text-center text-sm leading-relaxed text-text-muted">
+            Public work is listed here. Production systems for B2B platforms, APIs, CRM automation, and conversational AI are in
+            <button
+                type="button"
+                class="focus-ring cursor-pointer rounded-sm font-medium text-sky-cyan underline-offset-2 hover:underline"
+                @click="scrollToExperience"
+            >
+                Experience</button>.
+        </p>
 
     </Section>
 </template>
@@ -129,6 +127,16 @@
         card.style.transform = '';
         card.style.setProperty('--mx', '50%');
         card.style.setProperty('--my', '50%');
+    };
+
+    const scrollToExperience = () => {
+        const target = document.querySelector('#experience');
+        if (!target) return;
+
+        target.scrollIntoView({
+            behavior: isReducedMotion.value ? 'auto' : 'smooth',
+            block: 'start',
+        });
     };
 
 </script>

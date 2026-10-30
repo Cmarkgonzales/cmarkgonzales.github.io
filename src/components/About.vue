@@ -1,142 +1,95 @@
 <template>
     <Section id="about" bg="default">
-            <SectionHeader
-                title="About Me"
-                subTitle="Who I Am"
-                subTitleColor="text-text-primary"
-            />
-            <div class="flex flex-col md:flex-row items-center gap-14 lg:gap-[4.75rem]">
-                <div
-                    class="md:w-2/5"
-                    data-reveal="fade-right"
+        <SectionHeader
+            class="!mb-10 md:!mb-12 lg:!mb-14"
+            title="Who I Am"
+            :subTitle="aboutProfile.headline"
+            subTitleColor="text-text-primary"
+        />
+
+        <div class="grid items-center gap-8 md:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] md:gap-10 lg:gap-14">
+            <figure
+                class="mx-auto w-full max-w-md md:max-w-none"
+                data-reveal="fade-right"
+                :style="{ '--reveal-delay': '120ms' }"
+            >
+                <div class="overflow-hidden rounded-2xl border border-border-subtle bg-light-cyan shadow-soft-dark">
+                    <img
+                        :src="profileImage"
+                        alt="Portrait of Christian Mark Gonzales"
+                        class="h-[22rem] w-full object-cover sm:h-[26rem] md:h-[28rem]"
+                    />
+                </div>
+                <figcaption class="mt-3 text-center font-mono text-xs uppercase tracking-[0.14em] text-text-muted md:text-left">
+                    Frontend roots. Backend focus. AI systems.
+                </figcaption>
+            </figure>
+
+            <div
+                class="min-w-0"
+                data-reveal="fade-left"
+                :style="{ '--reveal-delay': '180ms' }"
+            >
+                <p class="max-w-3xl text-lg font-medium leading-relaxed text-text-primary sm:text-xl lg:text-2xl">
+                    {{ aboutProfile.valueProposition }}
+                </p>
+                <p class="mt-5 max-w-3xl text-base leading-relaxed text-text-secondary sm:text-lg">
+                    {{ aboutProfile.experienceSummary }}
+                </p>
+
+                <blockquote class="mt-6 max-w-3xl border-l-2 border-chinese-bronze pl-4">
+                    <p class="text-base font-medium leading-relaxed text-text-primary">
+                        “{{ aboutProfile.quote }}”
+                    </p>
+                </blockquote>
+
+                <a
+                    :href="resumeLink"
+                    download
+                    aria-label="Download Christian Gonzales's resume as a PDF"
+                    class="focus-ring mt-6 inline-flex items-center rounded-xl bg-chinese-bronze px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_0_1px_rgba(217,128,50,0.28),0_0_20px_rgba(217,128,50,0.2)] transition duration-300 hover:bg-dark-bronze hover:shadow-[0_0_0_1px_rgba(217,128,50,0.45),0_0_26px_rgba(217,128,50,0.32)]"
                 >
-                    <div class="relative">
-                        <div class="w-full h-96 bg-light-cyan rounded-2xl overflow-hidden shadow-lg">
-                            <img
-                                src="/assets/profile.png"
-                                alt="About Profile"
-                                class="w-full h-full object-cover rounded-2xl"
-                            />
-                        </div>
-                        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-chinese-bronze rounded-2xl flex items-center justify-center shadow-lg">
-                            <div class="text-center text-white">
-                                <span class="text-3xl font-bold block">
-                                    4+
-                                </span>
-                                <span class="text-sm font-medium">
-                                    Years Exp.
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:w-3/5 stack-md" data-reveal="fade-left" :style="{ '--reveal-delay': '400ms' }">
-                    <h3 class="text-2xl lg:text-3xl font-semibold text-text-primary">
-                        Full Stack Developer
-                    </h3>
-                    <p class="text-text-secondary leading-relaxed">
-                        {{ aboutMe.experience }}
-                    </p>
-                    <p class="text-text-secondary leading-relaxed">
-                        {{ aboutMe.mindset }}
-                    </p>
-                    <p class="text-text-secondary leading-relaxed">
-                        {{ aboutMe.hobbies }}
-                    </p>
-
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                        data-reveal="zoom-in"
-                        :style="{ '--reveal-delay': '600ms' }"
-                    >
-                        <article
-                            v-for="(highlight, index) in developerHighlights"
-                            :key="`highlight-${index}`"
-                            class="about-highlight surface-glass border border-border-subtle rounded-xl p-4 backdrop-blur-sm"
-                        >
-                            <div class="flex items-start gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ncs-blue/15 border border-ncs-blue/30">
-                                    <font-awesome-icon
-                                        class="text-sky-cyan text-sm"
-                                        :icon="['fas', highlight.icon]"
-                                    />
-                                </div>
-                                <div class="min-w-0">
-                                    <h4 class="text-sm font-semibold text-text-primary leading-snug">
-                                        {{ highlight.title }}
-                                    </h4>
-                                    <p class="mt-1 text-sm text-text-secondary leading-relaxed">
-                                        {{ highlight.description }}
-                                    </p>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                    <a
-                        :href="resumeLink"
-                        aria-label="Download"
-                        class="inline-flex items-center bg-chinese-bronze hover:bg-dark-bronze text-white px-6 py-3 rounded-xl font-medium transition duration-300 shadow-[0_0_0_1px_rgba(217,128,50,0.28),0_0_24px_rgba(217,128,50,0.22)] hover:shadow-[0_0_0_1px_rgba(217,128,50,0.45),0_0_30px_rgba(217,128,50,0.35)]"
-                        data-reveal="fade-up"
-                        :style="{ '--reveal-delay': '700ms' }"
-                    >
-                        <span>Download Resume</span>
-                        <font-awesome-icon class="ml-2" icon="fas fa-download" />
-                    </a>
-                </div>
+                    <span>Download Resume</span>
+                    <font-awesome-icon class="ml-2" icon="fas fa-download" aria-hidden="true" />
+                </a>
             </div>
+        </div>
     </Section>
 </template>
 
 <script setup>
     import { computed } from 'vue';
-    import { constantsStore } from '@/store';
+    import { constantsStore, DEFAULT_RESUME_LINK } from '@/store';
     import SectionHeader from '@/generics/SectionHeader.vue';
     import Section from '@/components/ui/Section.vue';
 
-    const aboutMe = computed(() => constantsStore.aboutMe);
-    const resumeLink = computed(() => constantsStore.resumeLink);
+    const DEFAULT_ABOUT_PROFILE = {
+        headline: 'Full Stack Software Engineer',
+        valueProposition: 'I build reliable backend systems and AI-powered products that turn complex business workflows into maintainable production software.',
+        experienceSummary: 'Across 4+ years, I have grown from frontend development into full-stack delivery and backend ownership, contributing to complex B2B solutions and workforce operations platforms while shipping REST APIs, asynchronous workflows, CRM automation, voice AI integrations, and cloud-deployed services for remote teams.',
+        quote: "Great software isn't measured by the amount of code written - it's measured by how reliably it solves real problems.",
+    };
 
-    const DEFAULT_HIGHLIGHTS = [
-        {
-            icon: 'desktop',
-            title: 'Full-stack delivery',
-            description: 'Ship cohesive features across APIs, data layers, and polished interfaces.',
-        },
-        {
-            icon: 'server',
-            title: 'Performance-first',
-            description: 'Optimize queries, payloads, and render paths before scaling infrastructure.',
-        },
-        {
-            icon: 'gear',
-            title: 'Maintainable systems',
-            description: 'Build clear architecture teams can extend with confidence over time.',
-        },
-        {
-            icon: 'paper-plane',
-            title: 'Collaborative shipping',
-            description: 'Partner with product and design to deliver on scope without cutting quality.',
-        },
-    ];
+    const profileImage = `${import.meta.env.BASE_URL}assets/profile.png`;
 
-    const developerHighlights = computed(() => {
-        const highlights = aboutMe.value.highlights;
-        if (Array.isArray(highlights) && highlights.length > 0) {
-            return highlights;
+    const normalizeText = (value, fallback) => {
+        if (typeof value !== 'string' || value.trim().length === 0) {
+            return fallback;
         }
-        return DEFAULT_HIGHLIGHTS;
+
+        return value.trim();
+    };
+
+    const aboutProfile = computed(() => {
+        const aboutMe = constantsStore.aboutMe ?? {};
+
+        return {
+            headline: normalizeText(aboutMe.headline, DEFAULT_ABOUT_PROFILE.headline),
+            valueProposition: normalizeText(aboutMe.valueProposition, DEFAULT_ABOUT_PROFILE.valueProposition),
+            experienceSummary: normalizeText(aboutMe.experienceSummary, DEFAULT_ABOUT_PROFILE.experienceSummary),
+            quote: normalizeText(aboutMe.quote, DEFAULT_ABOUT_PROFILE.quote),
+        };
     });
+
+    const resumeLink = computed(() => constantsStore.resumeLink || DEFAULT_RESUME_LINK);
 </script>
-
-<style scoped>
-    .about-highlight {
-        transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-    }
-
-    .about-highlight:hover {
-        border-color: rgba(4, 138, 191, 0.35);
-        box-shadow: 0 0 0 1px rgba(4, 138, 191, 0.15), 0 8px 24px rgba(2, 10, 18, 0.35);
-        transform: translateY(-2px);
-    }
-</style>

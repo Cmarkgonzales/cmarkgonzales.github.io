@@ -99,7 +99,7 @@
                         <HeroDesktopCanvas
                             class="hero-canvas-panel relative z-[1] aspect-square w-full max-w-[22rem] min-h-[16rem] sm:max-w-[26rem] md:max-w-none md:min-h-[22rem] lg:min-h-[26rem]"
                         />
-                        <p class="hero-role-caption absolute inset-x-0 bottom-[16%] z-[4] sm:bottom-[20%] md:bottom-[24%]">
+                        <p class="hero-role-caption absolute inset-x-0 bottom-[4%] z-[4] sm:bottom-[5%] md:bottom-[6%]">
                             <span class="sr-only">I am {{ heroRolesLabel }}</span>
                             <span class="hero-role" aria-hidden="true">
                                 <span class="hero-role-sizer">I am {{ longestRole }}|</span>
