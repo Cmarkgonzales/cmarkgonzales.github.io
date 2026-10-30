@@ -16,7 +16,7 @@ Developer portfolio for Christian Mark Gonzales. A single-page site covering an 
 
 ## Local setup
 
-Requires Node.js 20.
+Requires Node.js 26.
 
 ```bash
 npm install
